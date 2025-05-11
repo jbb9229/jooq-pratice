@@ -3,3 +3,4 @@ plugins {
 }
 rootProject.name = "jooq-pratice"
 
+include("jOOQ-custom")

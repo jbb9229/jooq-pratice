@@ -1,9 +1,13 @@
-val jooqVersion = "3.19.22"
+extra["jooqVersion"] = "3.19.22" // jOOQ 버전
+val jooqVersion = extra["jooqVersion"] as String
+extra["mysqlVersion"] = "8.3.0" // MySQL Connector/J 버전
+val mysqlVersion = extra["mysqlVersion"] as String
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
+    id("org.springframework.boot") version "3.4.5"
+    id("io.spring.dependency-management") version "1.1.7"
     id("nu.studer.jooq") version "9.0"
 }
 
@@ -11,8 +15,21 @@ group = "com.boong"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 
 repositories {
     mavenCentral()
@@ -37,12 +54,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // MySQL 드라이버
-    runtimeOnly("com.mysql:mysql-connector-j")
-    jooqGenerator("com.mysql:mysql-connector-j")
+    runtimeOnly("com.mysql:mysql-connector-j:${mysqlVersion}")
 
     implementation("org.jooq:jooq:${jooqVersion}")
     jooqGenerator("org.jooq:jooq:${jooqVersion}")
     jooqGenerator("org.jooq:jooq-meta:${jooqVersion}")
+    jooqGenerator(project(":jOOQ-custom")) // 커스텀 생성기 전략
 }
 
 tasks.named<Test>("test") {
@@ -87,7 +104,7 @@ jooq {
                         packageName = "com.boong.sakila.generated" // 생성된 코드의 패키지 이름
                         directory = "src/generated/jooq" // 생성된 코드의 디렉토리
                     }
-                    strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy" // 기본 생성 전략 사용
+                    strategy.name = "jooq.custom.generator.KPrefixGeneratorStrategy" // 커스텀 생성기 전략 사용
                 }
             }
         }
