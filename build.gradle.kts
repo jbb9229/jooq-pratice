@@ -91,6 +91,7 @@ jooq {
                     database.apply {
                         name = "org.jooq.meta.mysql.MySQLDatabase"
                         inputSchema = "sakila" // 사용할 스키마 이름
+//                        isUnsignedTypes = false // UIngeter와 같은 jOOQ 타입 사용 여부 Default: true
                     }
                     generate.apply {
                         isDaos = true // DAO 생성
@@ -99,6 +100,13 @@ jooq {
                         isFluentSetters = true // 플루언트 세터: pojo나 record 생성 시 return 값을 void 대신 객체 자체를 리턴
                         isJavaTimeTypes = true // java.time 패키지의 타입 사용
                         isDeprecated = false // deprecated된 메서드 사용 안 함
+
+//                        그 외 커스텀 설정 들
+//                        isJpaAnnotations = true // JPA 어노테이션 사용
+//                        jpaVersion = "2.2" // JPA 버전
+//                        isValidationAnnotations = true // 유효성 검사 어노테이션 사용
+//                        isSpringAnnotations = true // Spring 어노테이션 사용
+//                        isSpringDao = true // Spring DAO 어노테이션 사용
                     }
                     target.apply {
                         packageName = "com.boong.sakila.generated" // 생성된 코드의 패키지 이름
